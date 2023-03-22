@@ -8,7 +8,6 @@ const styles = {
   leftContainer: {},
   leftDetail: {
     width: "320px",
-    height: "300px",
     border: "1px solid rgba(0,0,0,0.2)",
     borderRadius: "8px",
     padding: "16px",
@@ -18,8 +17,10 @@ const styles = {
     title: { fontWeight: "700", fontSize: "16px", lineHeight: "24px" },
     content: {
       display: "grid",
-      gridTemplateColumns: "50% 10px 50%",
+      gridTemplateColumns: "1fr 2px 1fr",
       flexGrow: "1",
+      justifyItems: "center",
+      gap: "10px",
       wrap: {
         titleWrap: {
           fontWeight: "500",
@@ -38,7 +39,7 @@ const styles = {
     btn: {
       gridColumn: "3 span",
       height: "40px",
-      //   alignSelf: "end",
+      margin: "16px 0 0 0",
       justifySelf: "end",
     },
   },
@@ -92,7 +93,9 @@ const styles = {
       gridTemplateColumns: "1fr 1fr",
       gap: "16px",
     },
-    input: { backgroundColor: "white" },
+    input: {
+      // backgroundColor: "white"
+    },
     subTitle: { fontSize: "14px", fontWeight: "400", lineHeight: "20px" },
     field: { backgroundColor: "white", margin: "16px 0 0 0" },
   },

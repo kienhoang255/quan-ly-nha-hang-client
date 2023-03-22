@@ -26,6 +26,9 @@ const getStage = async () => await axios.get(`${URL}table/option/stage`);
 const getTableByStage = async (params: {}) =>
   await instance.get("table/", { params: params });
 
+const searchTable = async (params: {}) =>
+  await instance.get("table/search/", { params: params });
+
 //TableImage
 
 const getOptions = async () => await axios.get(`${URL}table-image/options`);
@@ -46,6 +49,9 @@ const getClient = async (data: string) => await instance.get(`client/${data}`);
 const getBillByIdClient = async (_id: string) =>
   await instance.get(`bill/client/${_id}`);
 
+// Booking
+const createBooking = async (data: {}) => await instance.post("booking", data);
+
 export default {
   getAllTypeFood,
   getFoodByType,
@@ -57,4 +63,6 @@ export default {
   login,
   getClient,
   getBillByIdClient,
+  createBooking,
+  searchTable,
 };

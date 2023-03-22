@@ -38,10 +38,19 @@ const validatePhoneNumber = (phone: any) => {
   return result;
 };
 
+export const validateNull = (data: any) => {
+  let result;
+  if (data === null || data === undefined || data === "") {
+    result = false;
+  } else result = true;
+  return result;
+};
+
 export default {
   increaseDate,
   validatePhoneNumber,
   validateEmail,
   validateName,
   increaseHour,
+  validateNull,
 };

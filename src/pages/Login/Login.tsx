@@ -60,7 +60,8 @@ const Login = () => {
     const form = Object.fromEntries(data.entries());
 
     services.login(form).then((res) => {
-      const decodedToken: any = decodeToken(res.data.createToken);
+      const { createToken, ...rest } = res.data;
+      const decodedToken: any = decodeToken(createToken);
       // Create time expire for cookie base on TOKEN
       const expired = new Date(
         moment.unix(decodedToken.exp).format("YYYY-MM-DD HH:mm:ss")
@@ -68,14 +69,18 @@ const Login = () => {
 
       // Set userInfo to redux
       dispatch(
-        setUser({ _id: decodedToken._id, username: decodedToken.username })
+        setUser({
+          _id: decodedToken._id,
+          username: decodedToken.username,
+          ...rest,
+        })
       );
 
       // Set to cookie
-      document.cookie = `token=${res.data.createToken}; expires=${expired}`;
+      document.cookie = `token=${createToken}; expires=${expired}`;
 
-      //Redirect to / (main page)
-      navigate("/");
+      //Redirect to / (booking page)
+      navigate("/booking");
     });
   };
   return (

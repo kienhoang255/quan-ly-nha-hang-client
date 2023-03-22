@@ -5,8 +5,13 @@ import booking from "../features/booking/bookingSlice";
 import table from "../features/table/tableSlice";
 import user from "../features/user/userSlice";
 import bill from "../features/bill/billSlice";
+import tab from "../features/tab/tabSlice";
 
 export const store = configureStore({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
   reducer: {
     counter,
     menu,
@@ -14,6 +19,7 @@ export const store = configureStore({
     table,
     user,
     bill,
+    tab,
   },
 });
 

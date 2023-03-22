@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -14,7 +14,7 @@ import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlin
 import { useAppSelector } from "../../store/hooks";
 
 interface Props {
-  value: number;
+  value: any;
 }
 
 const Tab1: React.FC<Props> = ({ value }) => {
@@ -96,7 +96,7 @@ const Tab1: React.FC<Props> = ({ value }) => {
     },
   };
   const user = useAppSelector((state) => state.user);
-  const [age, setAge] = React.useState("");
+  const [sex, setSex] = useState("");
 
   function stringToColor(string: string) {
     let hash = 0;
@@ -133,7 +133,7 @@ const Tab1: React.FC<Props> = ({ value }) => {
   }
 
   const handleChange = (event: any) => {
-    setAge(event.target.value);
+    setSex(event.target.value);
   };
   return (
     <>
@@ -217,13 +217,11 @@ const Tab1: React.FC<Props> = ({ value }) => {
               <Select
                 labelId="demo-simple-select-standard-label"
                 id="demo-simple-select-standard"
-                value={user?.sex}
+                value={sex || user?.sex || "empty"}
                 onChange={handleChange}
-                label="Age"
+                label="Sex"
               >
-                <MenuItem value="">
-                  <em>Trống</em>
-                </MenuItem>
+                <MenuItem value="empty">Trống</MenuItem>
                 <MenuItem value="male">Nam</MenuItem>
                 <MenuItem value="female">Nữ</MenuItem>
               </Select>

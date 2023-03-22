@@ -12,9 +12,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 
 interface Props {
-  userInfo: any;
+  // userInfo: any;
   timePickList: [];
-  setUserInfo: any;
+  // setUserInfo: any;
   minDate: any;
   maxDate: any;
   errorMessage?: any;
@@ -27,9 +27,9 @@ interface Props {
 }
 
 const SearchMobile: React.FC<Props> = ({
-  userInfo,
+  // userInfo,
   timePickList,
-  setUserInfo,
+  // setUserInfo,
   minDate,
   maxDate,
   errorMessage,
@@ -65,7 +65,7 @@ const SearchMobile: React.FC<Props> = ({
       >
         <Autocomplete
           id="time"
-          value={userInfo.timeCheckIn}
+          // value={userInfo.timeCheckIn}
           isOptionEqualToValue={(option, value) => {
             return value === option || option === "09:00";
           }}
@@ -79,10 +79,10 @@ const SearchMobile: React.FC<Props> = ({
             />
           )}
           onChange={(event: any, newValue: string | null) => {
-            setUserInfo((prev: any) => ({
-              ...prev,
-              timeCheckIn: newValue,
-            }));
+            // setUserInfo((prev: any) => ({
+            //   ...prev,
+            //   timeCheckIn: newValue,
+            // }));
           }}
           sx={{ width: "100%" }}
         />

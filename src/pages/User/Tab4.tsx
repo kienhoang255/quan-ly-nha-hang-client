@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Divider, Typography } from "@mui/material";
 
 interface Props {
-  value: number;
+  value: any;
 }
 const Tab4: React.FC<Props> = ({ value }) => {
   const styles = {

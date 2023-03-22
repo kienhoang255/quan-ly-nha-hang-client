@@ -19,8 +19,10 @@ const styles = {
     title: { fontWeight: "700", fontSize: "16px", lineHeight: "24px" },
     content: {
       display: "grid",
-      gridTemplateColumns: "50% 10px 50%",
+      gridTemplateColumns: "1fr 2px 1fr",
       flexGrow: "1",
+      justifyItems: "center",
+      gap: "10px",
       wrap: {
         titleWrap: {
           fontWeight: "500",
@@ -29,7 +31,7 @@ const styles = {
           color: "#1a1a1a",
         },
         text: {
-          fontWeight: "400",
+          fontWeight: "700",
           fontSize: "16px",
           lineHeight: "24px",
         },
@@ -39,7 +41,7 @@ const styles = {
     btn: {
       gridColumn: "3 span",
       height: "40px",
-      //   alignSelf: "end",
+      margin: "16px 0 0 0",
       justifySelf: "end",
     },
   },

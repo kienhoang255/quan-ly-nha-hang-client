@@ -6,9 +6,9 @@ interface BookingState {
     fullName?: string;
     phoneNumber?: string;
     email?: string;
-    timeCheckIn?: string;
-    dateCheckIn?: moment.Moment;
   };
+  dateCheckIn?: moment.Moment;
+  timeCheckIn?: string;
   table?: {
     numOfPeople?: number;
     name?: string;
@@ -21,6 +21,7 @@ interface BookingState {
     cancel: boolean;
   };
   defaultDateTime: any;
+  specialRequired?: string;
 }
 
 const initialState: BookingState = {
@@ -30,6 +31,9 @@ const initialState: BookingState = {
     email: "kien@gmail.com",
   },
   table: {},
+  dateCheckIn: moment([]).add(1, "day"),
+  timeCheckIn: "9:00",
+
   agreeLicense: {
     privacy: false,
     cancel: false,
@@ -40,6 +44,7 @@ const initialState: BookingState = {
 export const bookingSlice = createSlice({
   name: "booking",
   initialState,
+
   reducers: {
     changeAgree: (state, action) => {
       state.agreeLicense = action.payload;
@@ -53,6 +58,20 @@ export const bookingSlice = createSlice({
       state.defaultDateTime = action.payload;
     },
 
+    setTimeCheckIn: (state, action) => ({
+      ...state,
+      timeCheckIn: action.payload,
+    }),
+    setDateCheckIn: (state, action) => ({
+      ...state,
+      dateCheckIn: action.payload,
+    }),
+
+    setSpecialRequired: (state, action) => ({
+      ...state,
+      specialRequired: action.payload,
+    }),
+
     changeUserInfo: (state, action) => {},
   },
 });
@@ -62,6 +81,9 @@ export const {
   setSelectedTable,
   changeUserInfo,
   changeDefaultDateTime,
+  setTimeCheckIn,
+  setDateCheckIn,
+  setSpecialRequired,
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

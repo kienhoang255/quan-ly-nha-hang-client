@@ -4,16 +4,11 @@ import moment from "moment";
 import BookingStep1 from "../../components/BookingStep/BookingStep1";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { styles } from "./styles";
-import {
-  checkDateCheckIn,
-  checkEmail,
-  checkFullName,
-  checkNumberOfPeople,
-  checkPhoneNumber,
-  checkTimeCheckIn,
-} from "./validateBooking";
 import BookingStep2 from "../../components/BookingStep/BookingStep2";
 import BookingStep3 from "../../components/BookingStep/BookingStep3";
+import services from "../../services";
+import ModalRequiredLogin from "../../components/Modal/ModalRequiredLogin";
+import ModalCreateBooking from "../../components/Modal/ModalCreateBooking";
 
 const steps = ["Chọn bàn", "Thông tin cá nhân", "Xác nhận"];
 
@@ -21,33 +16,12 @@ const Booking = () => {
   const [step, setStep] = useState(0);
   const [slideDirection, setSlideDirection] = useState(["left", "right"]);
   const [tablePick, setTablePick] = useState("web");
-  const agreeLicense = useAppSelector((state) => state.booking.agreeLicense);
-  const userInfoSlice = useAppSelector((state) => state.booking.userInfo);
-
+  const [isLogin, setIsLogin] = useState(false);
+  const [isCreate, setIsCreate] = useState(false);
+  const [createStatus, setCreateStatus] = useState<string | null>();
+  const booking = useAppSelector((state) => state.booking);
+  const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-  const [userInfo, setUserInfo] = useState({
-    fullName: userInfoSlice.fullName || "",
-    phoneNumber: userInfoSlice.phoneNumber || "",
-    email: userInfoSlice.email || "",
-    timeCheckIn: userInfoSlice.timeCheckIn,
-    dateCheckIn: userInfoSlice.dateCheckIn,
-  });
-
-  const [license, setLicense] = useState({
-    privacy: agreeLicense.privacy,
-    cancel: agreeLicense.cancel,
-  });
-
-  const handleChangeDatePicker = useCallback(
-    (e: object | any) => {
-      const date = moment(e).format("MM/DD/YYYY");
-      setUserInfo((prev: any) => ({
-        ...prev,
-        dateCheckIn: date,
-      }));
-    },
-    [userInfo.dateCheckIn]
-  );
 
   const handleChangeTable = useCallback(
     (e: React.MouseEvent<HTMLElement>, newTable: string) => {
@@ -55,17 +29,6 @@ const Booking = () => {
     },
     [tablePick]
   );
-
-  const handleChangeLicenseCancel = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setLicense((prev) => ({ ...prev, cancel: e.target.checked }));
-  };
-  const handleChangeLicensePrivacy = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setLicense((prev) => ({ ...prev, privacy: e.target.checked }));
-  };
 
   const handleBackStep = useCallback(() => {
     if (step > 0) {
@@ -75,16 +38,13 @@ const Booking = () => {
   }, [step]);
 
   const handleNextStep = useCallback(() => {
+    setSlideDirection(["left", "right"]);
     if (step === 0) {
       // const fullName = checkFullName(setErrorMessage, userInfo);
-      // const email = checkEmail(setErrorMessage, userInfo);
-      // const phoneNumber = checkPhoneNumber(setErrorMessage, userInfo);
-      // const nop = checkNumberOfPeople(setErrorMessage, userInfo);
-      // const time = checkTimeCheckIn(setErrorMessage, userInfo);
+
       // const date = checkDateCheckIn(setErrorMessage, userInfo);
       // if (fullName && email && phoneNumber && nop && time && date) {
       //   dispatch(changeUserInfo(userInfo));
-      //   setSlideDirection(["left", "right"]);
       setStep(step + 1);
       // }
     }
@@ -93,11 +53,35 @@ const Booking = () => {
       setStep(step + 1);
     }
     if (step === 2) {
-      if (license.privacy === true && license.cancel === true) {
-        setStep(step + 1);
-      }
+      // if (license.privacy === true && license.cancel === true) {
+      // }
+      const data = {
+        id_table: booking.table?._id,
+        timeCheckIn: booking.timeCheckIn,
+        dateCheckIn: moment(booking.dateCheckIn).format("YYYY-MM-DD"),
+        specialRequired: booking.specialRequired,
+        id_client: user._id,
+      };
+      setIsCreate(true);
+      services
+        .createBooking(data)
+        .then((e) => {
+          setCreateStatus("success");
+        })
+        .catch((e) => {
+          setCreateStatus("error");
+        });
     }
-  }, [step, userInfo, license]);
+  }, [step]);
+
+  useEffect(() => {
+    document.cookie
+      .split(";")
+      .map((e) => e.split("="))
+      .forEach((e) =>
+        e[0].trim() === "token" ? setIsLogin(false) : setIsLogin(true)
+      );
+  }, []);
 
   return (
     <Box sx={styles.container}>
@@ -142,13 +126,19 @@ const Booking = () => {
             Đặt bàn ngay HOTLINE: 02473007990
           </Button>
         </a>
+        <ModalRequiredLogin open={isLogin} />
+        <ModalCreateBooking
+          open={isCreate}
+          status={createStatus!}
+          setStep={setStep}
+          setIsCreate={setIsCreate}
+          setCreateStatus={setCreateStatus}
+        />
       </Box>
       <Box sx={styles.formContent}>
         <BookingStep1
           step={step}
           slideDirection={slideDirection}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
           handleNextStep={handleNextStep}
         />
         <BookingStep2
@@ -173,46 +163,6 @@ const Booking = () => {
         />
         <BookingStepFinal slideDirection={slideDirection} step={step} /> */}
       </Box>
-      {/* <Box sx={{ display: step === 0 ? "none" : "block" }}>
-        <Box sx={styles.actionBtn}>
-          {step !== 3 && (
-            <Button
-              sx={styles.btn}
-              variant="contained"
-              onClick={handleBackStep}
-            >
-              Quay lại
-            </Button>
-          )}
-          {step === 3 && (
-            <Button
-              sx={styles.btn}
-              variant="contained"
-              style={{ margin: "auto" }}
-            >
-              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
-                Trang chủ
-              </Link>
-            </Button>
-          )}
-          <Box sx={styles.actionBtn.right}>
-            {step === 1 && (
-              <Button sx={styles.btn} variant="contained">
-                Tự động chọn
-              </Button>
-            )}
-            {step !== 3 && (
-              <Button
-                sx={styles.btn}
-                variant="contained"
-                onClick={handleNextStep}
-              >
-                Tiếp tục
-              </Button>
-            )}
-          </Box>
-        </Box>
-      </Box> */}
     </Box>
   );
 };

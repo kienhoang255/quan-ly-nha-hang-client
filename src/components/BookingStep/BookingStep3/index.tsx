@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Slide,
@@ -10,6 +10,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Popover,
 } from "@mui/material";
 import styles from "./styles";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -17,6 +18,7 @@ import FormatQuoteSharpIcon from "@mui/icons-material/FormatQuoteSharp";
 
 import { useAppSelector } from "../../../store/hooks";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 interface Props {
   step: Number;
@@ -31,11 +33,31 @@ const BookingStep3: React.FC<Props> = ({
   handleBackStep,
 }) => {
   const booking = useAppSelector((state) => state.booking);
+  const user = useAppSelector((state) => state.user);
   const tableImage = useAppSelector(
     (state) => state.table.tableImage[booking.table?._id!]
   );
+  const [license, setLicense] = useState(false);
+
+  const handleValidateNextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (license) {
+      handleNextStep();
+    } else {
+      setAnchorEl(e.currentTarget);
+    }
+  };
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+  const open = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const direction =
     step === 2 ? slideDirection[0] : step === 3 ? slideDirection[1] : "left";
+
   return (
     <Slide
       direction={direction}
@@ -55,37 +77,60 @@ const BookingStep3: React.FC<Props> = ({
                   sx={styles.leftDetail.content.wrap.titleWrap}
                   gutterBottom
                 >
-                  Nhận phòng
+                  Check in
                 </Typography>
                 <Typography sx={styles.leftDetail.content.wrap.text}>
-                  T3, 14 tháng 3 2023
+                  {moment(booking?.dateCheckIn).format(
+                    "ddd, DD [tháng] MM YYYY "
+                  )}
+                </Typography>
+
+                <Typography sx={styles.leftDetail.content.wrap.titleWrap}>
+                  Từ {booking.timeCheckIn}
                 </Typography>
               </Box>
               <Divider
                 orientation="vertical"
                 flexItem
-                sx={{ height: "70px" }}
+                sx={{ height: "110px" }}
               />
               <Box>
+                <Typography
+                  sx={styles.leftDetail.content.wrap.titleWrap}
+                  gutterBottom
+                >
+                  Check out
+                </Typography>
                 <Typography sx={styles.leftDetail.content.wrap.text}>
-                  12:30
+                  {moment(booking?.dateCheckIn).format(
+                    "ddd, DD [tháng] MM YYYY "
+                  )}
+                </Typography>
+
+                <Typography sx={styles.leftDetail.content.wrap.titleWrap}>
+                  Cho đến{" "}
+                  {`${Number(booking.timeCheckIn?.split(":")[0]) + 4}:${
+                    booking.timeCheckIn?.split(":")[1]
+                  }`}
                 </Typography>
               </Box>
             </Box>
           </Box>
 
-          <Box sx={styles.leftDetail}>
-            <Typography gutterBottom sx={styles.leftDetail.title}>
-              Yêu cầu đặc biệt của bạn
-            </Typography>
-            <Box sx={{ display: "flex" }}>
-              <Typography sx={styles.leftDetail.content.wrap.text}>
-                <FormatQuoteSharpIcon sx={{ transform: "rotate(180deg)" }} />
-                Tổ chức sinh nhật
-                <FormatQuoteSharpIcon />
+          {booking.specialRequired && (
+            <Box sx={styles.leftDetail}>
+              <Typography gutterBottom sx={styles.leftDetail.title}>
+                Yêu cầu đặc biệt của bạn
               </Typography>
+              <Box sx={{ display: "flex" }}>
+                <Typography sx={styles.leftDetail.content.wrap.text}>
+                  <FormatQuoteSharpIcon sx={{ transform: "rotate(180deg)" }} />
+                  {booking.specialRequired}
+                  <FormatQuoteSharpIcon />
+                </Typography>
+              </Box>
             </Box>
-          </Box>
+          )}
         </Box>
         <Box sx={styles.rightContainer}>
           <Box sx={styles.rightDetailTable}>
@@ -119,7 +164,7 @@ const BookingStep3: React.FC<Props> = ({
 
           <Box sx={styles.box}>
             <Typography sx={styles.box.title}>
-              Thông tin chi tiết của bạnw
+              Thông tin chi tiết của bạn
             </Typography>
             <Chip
               sx={styles.box.chip}
@@ -127,22 +172,28 @@ const BookingStep3: React.FC<Props> = ({
             />
             <Box sx={styles.box.content}>
               <TextField
+                disabled
                 sx={styles.box.input}
                 id="username"
                 label="Họ tên*"
                 variant="outlined"
+                value={user.username}
               />
               <TextField
+                disabled
                 sx={styles.box.input}
                 id="phoneNumber"
                 label="Số điện thoại*"
                 variant="outlined"
+                value={user.phone}
               />
               <TextField
+                disabled
                 sx={styles.box.input}
                 id="email"
                 label="Email*"
                 variant="outlined"
+                value={user.email}
               />
               <Button onClick={() => handleBackStep()}>
                 Thay đổi thông tin
@@ -151,7 +202,13 @@ const BookingStep3: React.FC<Props> = ({
           </Box>
           <FormGroup sx={{ padding: "16px" }}>
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setLicense(e.target.checked);
+                  }}
+                />
+              }
               label={
                 <p>
                   Bạn đồng ý với <Link to="#">điều khoản chung</Link> và
@@ -161,6 +218,19 @@ const BookingStep3: React.FC<Props> = ({
             />
           </FormGroup>
         </Box>
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <Typography sx={{ p: 2 }}>
+            Vui lòng đồng ý với điều khoản chung và chính sách bảo mật.
+          </Typography>
+        </Popover>
         <Button
           sx={{
             color: "white",
@@ -173,7 +243,7 @@ const BookingStep3: React.FC<Props> = ({
             justifySelf: "end",
             margin: "0 12px 0 0",
           }}
-          onClick={() => handleNextStep()}
+          onClick={handleValidateNextStep}
         >
           Tiếp theo &gt;
         </Button>

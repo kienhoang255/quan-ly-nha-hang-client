@@ -10,6 +10,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { removeUser } from "../../features/user/userSlice";
+import { setTab } from "../../features/tab/tabSlice";
 
 const UserBtn = () => {
   const styles = {
@@ -105,6 +106,7 @@ const UserBtn = () => {
     dispatch(removeUser(undefined));
     document.cookie = "token" + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     navigate("/user");
+    navigate("/");
   };
 
   function stringAvatarXS(name: string) {
@@ -158,14 +160,9 @@ const UserBtn = () => {
       >
         <Box sx={styles.container}>
           <Box sx={styles.header}>
-            <Avatar
-              {...stringAvatarMD(`${username}`)}
-              onClick={(e: any) => {
-                handleClick(e);
-              }}
-            />
+            <Avatar {...stringAvatarMD(`${username}`)} />
             {/* <Box sx={styles.header.avatar}></Box> */}
-            <Typography>Ten</Typography>
+            <Typography>{username}</Typography>
             <Link
               to="/user"
               onClick={handleClose}
@@ -176,12 +173,51 @@ const UserBtn = () => {
           </Box>
           <Divider />
           <Box sx={styles.body}>
-            <Button sx={styles.body.btn} variant="text">
-              Thông tin tài khoản
-            </Button>
-            <Button sx={styles.body.btn}>Ưu đãi của tôi</Button>
-            <Button sx={styles.body.btn}>Lịch sử giao dịch</Button>
-            <Button sx={styles.body.btn}>Lịch sử đặt bàn</Button>
+            <Link to="/user" style={{ textDecoration: "none" }}>
+              <Button
+                sx={styles.body.btn}
+                variant="text"
+                onClick={() => {
+                  handleClose();
+                  dispatch(setTab(0));
+                }}
+              >
+                Thông tin tài khoản
+              </Button>
+            </Link>
+            <Link to="/user" style={{ textDecoration: "none" }}>
+              <Button
+                sx={styles.body.btn}
+                onClick={() => {
+                  handleClose();
+                  dispatch(setTab(1));
+                }}
+              >
+                Ưu đãi của tôi
+              </Button>
+            </Link>
+            <Link to="/user" style={{ textDecoration: "none" }}>
+              <Button
+                sx={styles.body.btn}
+                onClick={() => {
+                  handleClose();
+                  dispatch(setTab(2));
+                }}
+              >
+                Lịch sử giao dịch
+              </Button>
+            </Link>
+            <Link to="/user" style={{ textDecoration: "none" }}>
+              <Button
+                sx={styles.body.btn}
+                onClick={() => {
+                  handleClose();
+                  dispatch(setTab(3));
+                }}
+              >
+                Lịch sử đặt bàn
+              </Button>
+            </Link>
           </Box>
           <Divider />
           <Button

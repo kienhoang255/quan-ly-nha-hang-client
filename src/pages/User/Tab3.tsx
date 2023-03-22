@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setBill } from "../../features/bill/billSlice";
 
 interface Props {
-  value: number;
+  value: any;
 }
 const Tab3: React.FC<Props> = ({ value }) => {
   const styles = {

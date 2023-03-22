@@ -10,6 +10,8 @@ import Tab1 from "./Tab1";
 import Tab2 from "./Tab2";
 import Tab3 from "./Tab3";
 import Tab4 from "./Tab4";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setTab } from "../../features/tab/tabSlice";
 
 const User = () => {
   const styles = {
@@ -36,16 +38,18 @@ const User = () => {
     },
   };
 
-  const [value, setValue] = React.useState(0);
+  const tab = useAppSelector((state) => state.tab);
+  const dispatch = useAppDispatch();
+
   const handleChange = (e: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    dispatch(setTab(newValue));
   };
   return (
     <Box sx={styles.container}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           sx={styles.tabs}
-          value={value}
+          value={tab}
           onChange={handleChange}
           aria-label="disabled tabs example"
         >
@@ -72,10 +76,10 @@ const User = () => {
         </Tabs>
       </Box>
       <Box sx={styles.tabsContent}>
-        <Tab1 value={value} />
-        <Tab2 value={value} />
-        <Tab3 value={value} />
-        <Tab4 value={value} />
+        <Tab1 value={tab} />
+        <Tab2 value={tab} />
+        <Tab3 value={tab} />
+        <Tab4 value={tab} />
       </Box>
     </Box>
   );

@@ -13,7 +13,6 @@ interface Props {
   };
   handleGetTableImage: Function;
   tableImage: any;
-  handleNextStep: Function;
   handleOnSelectedTable: Function;
 }
 
@@ -21,7 +20,6 @@ const TableItem: React.FC<Props> = ({
   tableInfo,
   handleGetTableImage,
   tableImage,
-  handleNextStep,
   handleOnSelectedTable,
 }) => {
   useEffect(() => {
@@ -93,7 +91,6 @@ const TableItem: React.FC<Props> = ({
           gridColumn: { xs: "span 2", sm: "none" },
         }}
         onClick={() => {
-          handleNextStep();
           handleOnSelectedTable(tableInfo);
         }}
       >
