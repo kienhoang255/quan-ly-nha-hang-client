@@ -43,6 +43,8 @@ const getTableByFilter = async (params: string[]) =>
 const login = async (data: {}) =>
   await instance.post("client/login", { ...data });
 
+const register = async (data: {}) => await instance.post("/client/", data);
+
 const getClient = async (data: string) => await instance.get(`client/${data}`);
 
 // Bill
@@ -61,6 +63,7 @@ export default {
   getTableImage,
   getTableByFilter,
   login,
+  register,
   getClient,
   getBillByIdClient,
   createBooking,
