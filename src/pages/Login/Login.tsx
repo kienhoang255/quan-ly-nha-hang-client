@@ -1,4 +1,10 @@
-import React, { CSSProperties, FormEvent, SyntheticEvent, memo } from "react";
+import React, {
+  CSSProperties,
+  FormEvent,
+  SyntheticEvent,
+  memo,
+  useState,
+} from "react";
 import { Box, Paper, Typography, TextField, Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import services from "../../services";
@@ -50,38 +56,95 @@ const Login = () => {
       left: 0,
       right: 0,
     },
+    err: {
+      color: "red",
+      fontSize: "18px",
+      display: "grid",
+      placeItems: "center",
+    },
   };
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const [errMes, setErrMes] = useState<{
+    email: string;
+    password: string;
+    err: string;
+  }>({
+    email: "",
+    password: "",
+    err: "",
+  });
 
   const handleSubmit = (e: React.BaseSyntheticEvent<any>) => {
     e.preventDefault();
     const data = new FormData(e.target);
     const form = Object.fromEntries(data.entries());
 
-    services.login(form).then((res) => {
-      const { createToken, ...rest } = res.data;
-      const decodedToken: any = decodeToken(createToken);
-      // Create time expire for cookie base on TOKEN
-      const expired = new Date(
-        moment.unix(decodedToken.exp).format("YYYY-MM-DD HH:mm:ss")
-      ).toUTCString();
+    // Check data is empty
+    const checkData = () => {
+      if (!form.email || !form.password) {
+        if (!form.email)
+          setErrMes((prev) => ({ ...prev, email: "Không được để trống!" }));
+        if (!form.password)
+          setErrMes((prev) => ({ ...prev, password: "Không được để trống!" }));
+        return false;
+      }
 
-      // Set userInfo to redux
-      dispatch(
-        setUser({
-          _id: decodedToken._id,
-          username: decodedToken.username,
-          ...rest,
+      return true;
+    };
+
+    if (checkData())
+      services
+        .login(form)
+        .then((res) => {
+          const { createToken, ...rest } = res.data;
+          const decodedToken: any = decodeToken(createToken);
+          // Create time expire for cookie base on TOKEN
+          const expired = new Date(
+            moment.unix(decodedToken.exp).format("YYYY-MM-DD HH:mm:ss")
+          ).toUTCString();
+
+          // Set userInfo to redux
+          dispatch(
+            setUser({
+              _id: decodedToken._id,
+              username: decodedToken.username,
+              ...rest,
+            })
+          );
+
+          // Set to cookie
+          document.cookie = `token=${createToken}; expires=${expired}`;
+
+          //Redirect to / (booking page)
+          navigate("/booking");
         })
-      );
+        .catch((err) => {
+          const status = err.response.status;
 
-      // Set to cookie
-      document.cookie = `token=${createToken}; expires=${expired}`;
+          switch (status) {
+            case 402:
+              setErrMes((prev) => ({
+                ...prev,
+                err: "Tài khoản chưa được đăng ký, vui lòng đăng kí trước!",
+              }));
+              break;
+            case 404:
+              setErrMes((prev) => ({
+                ...prev,
+                err: "Email không tồn tại hoặc mật khẩu không chính xác!",
+              }));
+              break;
 
-      //Redirect to / (booking page)
-      navigate("/booking");
-    });
+            default:
+              setErrMes((prev) => ({
+                ...prev,
+                err: "Có lỗi xảy ra, vui lòng liên hệ dev!",
+              }));
+              break;
+          }
+        });
   };
   return (
     <Box sx={styles.container}>
@@ -95,12 +158,32 @@ const Login = () => {
             label="Email"
             defaultValue=""
             variant="standard"
+            error={!!errMes!.email}
+            helperText={errMes!.email}
+            onChange={(e) => {
+              if (!e.target.value) {
+                setErrMes((prev) => ({
+                  ...prev,
+                  email: "Không được để trống!",
+                }));
+              } else setErrMes((prev) => ({ ...prev, email: "" }));
+            }}
           />
           <TextField
             name="password"
             label="Mật khẩu"
             type="password"
             variant="standard"
+            error={!!errMes!.password}
+            helperText={errMes!.password}
+            onChange={(e) => {
+              if (!e.target.value) {
+                setErrMes((prev) => ({
+                  ...prev,
+                  password: "Không được để trống!",
+                }));
+              } else setErrMes((prev) => ({ ...prev, password: "" }));
+            }}
           />
           <Button type="submit" sx={styles.btn}>
             Đăng nhập
@@ -108,6 +191,7 @@ const Login = () => {
           <Link to="/register">
             <Button sx={styles.register}>Đăng ký ?</Button>
           </Link>
+          <span style={styles.err}>{errMes.err}</span>
         </form>
       </Paper>
     </Box>
