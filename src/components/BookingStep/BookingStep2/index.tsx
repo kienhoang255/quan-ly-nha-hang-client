@@ -48,77 +48,77 @@ const BookingStep2: React.FC<Props> = ({
     step === 1 ? slideDirection[0] : step === 2 ? slideDirection[1] : "left";
 
   const handleValidateNextStep = () => {
-    let phoneCorrect = false;
-    let emailCorrect = false;
-    let usernameCorrect = false;
-    if (!utils.validatePhoneNumber(user.phone)) {
-      setMessageError((prev: any) => ({
-        ...prev,
-        phone: {
-          ...prev.phone,
-          message: "Đây không phải số điện thoại",
-          notification: true,
-        },
-      }));
-      phoneCorrect = true;
-    } else {
-      setMessageError((prev: any) => ({
-        ...prev,
-        phone: {
-          ...prev.phone,
-          message: "",
-          notification: false,
-        },
-      }));
-      phoneCorrect = false;
-    }
+    // let phoneCorrect = false;
+    // let emailCorrect = false;
+    // let usernameCorrect = false;
+    // if (!utils.validatePhoneNumber(user.phone)) {
+    //   setMessageError((prev: any) => ({
+    //     ...prev,
+    //     phone: {
+    //       ...prev.phone,
+    //       message: "Đây không phải số điện thoại",
+    //       notification: true,
+    //     },
+    //   }));
+    //   phoneCorrect = true;
+    // } else {
+    //   setMessageError((prev: any) => ({
+    //     ...prev,
+    //     phone: {
+    //       ...prev.phone,
+    //       message: "",
+    //       notification: false,
+    //     },
+    //   }));
+    //   phoneCorrect = false;
+    // }
 
-    if (!utils.validateEmail(user.email!)) {
-      setMessageError((prev: any) => ({
-        ...prev,
-        email: {
-          ...prev.email,
-          message: "Đây không phải email",
-          notification: true,
-        },
-      }));
-      emailCorrect = true;
-    } else {
-      setMessageError((prev: any) => ({
-        ...prev,
-        email: {
-          ...prev.email,
-          message: "",
-          notification: false,
-        },
-      }));
-      emailCorrect = false;
-    }
+    // if (!utils.validateEmail(user.email!)) {
+    //   setMessageError((prev: any) => ({
+    //     ...prev,
+    //     email: {
+    //       ...prev.email,
+    //       message: "Đây không phải email",
+    //       notification: true,
+    //     },
+    //   }));
+    //   emailCorrect = true;
+    // } else {
+    //   setMessageError((prev: any) => ({
+    //     ...prev,
+    //     email: {
+    //       ...prev.email,
+    //       message: "",
+    //       notification: false,
+    //     },
+    //   }));
+    //   emailCorrect = false;
+    // }
 
-    if (!utils.validateNull(user.username!)) {
-      setMessageError((prev: any) => ({
-        ...prev,
-        username: {
-          ...prev.username,
-          message: "Không được để trống",
-          notification: true,
-        },
-      }));
-      usernameCorrect = true;
-    } else {
-      setMessageError((prev: any) => ({
-        ...prev,
-        username: {
-          ...prev.username,
-          message: "",
-          notification: false,
-        },
-      }));
-      usernameCorrect = false;
-    }
-    if (!phoneCorrect && !emailCorrect && !usernameCorrect) {
-      handleNextStep();
-    }
+    // if (!utils.validateNull(user.username!)) {
+    //   setMessageError((prev: any) => ({
+    //     ...prev,
+    //     username: {
+    //       ...prev.username,
+    //       message: "Không được để trống",
+    //       notification: true,
+    //     },
+    //   }));
+    //   usernameCorrect = true;
+    // } else {
+    //   setMessageError((prev: any) => ({
+    //     ...prev,
+    //     username: {
+    //       ...prev.username,
+    //       message: "",
+    //       notification: false,
+    //     },
+    //   }));
+    //   usernameCorrect = false;
+    // }
+    // if (!phoneCorrect && !emailCorrect && !usernameCorrect) {
+    handleNextStep();
+    // }
   };
   return (
     // <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -223,7 +223,7 @@ const BookingStep2: React.FC<Props> = ({
             </Typography>
             <Chip
               sx={styles.box.chip}
-              label="Gần xong rồi! Chỉ cần điền phần thông tin * bắt buộc"
+              label="Gần xong rồi! Lưu ý khi đến nhà hàng bạn cần cung cấp số điện hoặc email để check in"
             />
             <Box sx={styles.box.content}>
               <TextField
@@ -231,7 +231,7 @@ const BookingStep2: React.FC<Props> = ({
                 id="username"
                 label="Họ tên*"
                 variant="outlined"
-                value={user.username}
+                value={user?.username}
                 onChange={(e) => {
                   dispatch(setUsername(e.target.value));
                 }}
@@ -243,7 +243,7 @@ const BookingStep2: React.FC<Props> = ({
                 id="phoneNumber"
                 label="Số điện thoại*"
                 variant="outlined"
-                value={user.phone}
+                value={user?.phone ? user.phone : ""}
                 onChange={(e) => {
                   dispatch(setPhone(e.target.value));
                 }}
@@ -255,7 +255,7 @@ const BookingStep2: React.FC<Props> = ({
                 id="email"
                 label="Email*"
                 variant="outlined"
-                value={user.email}
+                value={user?.email ? user.email : ""}
                 onChange={(e) => {
                   dispatch(setEmail(e.target.value));
                 }}
@@ -268,7 +268,7 @@ const BookingStep2: React.FC<Props> = ({
             <Typography sx={styles.box.title}>Các Yêu Cầu Đặc Biệt</Typography>
             <Typography sx={styles.box.subTitle}>
               Các yêu cầu đặc biệt không đảm bảo sẽ được đáp ứng – tuy nhiên,
-              chỗ nghỉ sẽ cố gắng hết sức để thực hiện.
+              nhà hàng sẽ cố gắng hết sức để thực hiện.
             </Typography>
             <TextField
               sx={styles.box.field}

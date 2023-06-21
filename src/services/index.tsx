@@ -13,12 +13,21 @@ const getAllTypeFood = async () => {
     .catch((err) => err);
 };
 
+// const getFoodByType = async (query: { type: any }) => {
+//   return await axios
+//     .get(`${URL}/cookies`)
+//     .then((res) => res.data)
+//     .catch((err) => err);
+// };
+
 const getFoodByType = async (query: { type: any }) => {
   return await axios
     .get(`${URL}food/?type=${query.type}`)
     .then((res) => res.data)
     .catch((err) => err);
 };
+
+const getFoodById = async (id: string) => await instance.get(`food/${id}`);
 
 //Table
 const getStage = async () => await axios.get(`${URL}table/option/stage`);
@@ -47,12 +56,20 @@ const register = async (data: {}) => await instance.post("/client/", data);
 
 const getClient = async (data: string) => await instance.get(`client/${data}`);
 
+const updateClient = async (data: any) => await instance.put("client/", data);
+
 // Bill
 const getBillByIdClient = async (_id: string) =>
   await instance.get(`bill/client/${_id}`);
 
 // Booking
 const createBooking = async (data: {}) => await instance.post("booking", data);
+
+const getBookingByIdClient = async (_id: string) =>
+  await instance.get(`booking/client/${_id}`);
+
+const getTableOptionsOnly = async () =>
+  await instance.get(`table-image/options`);
 
 export default {
   getAllTypeFood,
@@ -68,4 +85,8 @@ export default {
   getBillByIdClient,
   createBooking,
   searchTable,
+  getTableOptionsOnly,
+  getFoodById,
+  getBookingByIdClient,
+  updateClient,
 };

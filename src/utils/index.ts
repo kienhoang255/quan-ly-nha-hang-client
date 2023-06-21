@@ -24,7 +24,7 @@ const validateName = (data: string) => {
   return false;
 };
 
-const validateEmail = (email: string) => {
+const validateEmail = (email: any) => {
   const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return email.match(regex);
 };
@@ -38,12 +38,23 @@ const validatePhoneNumber = (phone: any) => {
   return result;
 };
 
-export const validateNull = (data: any) => {
+const validateNull = (data: any) => {
   let result;
   if (data === null || data === undefined || data === "") {
     result = false;
   } else result = true;
   return result;
+};
+
+const numberWithCommas = (number: number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const formatVND = (number: number) => {
+  return new Intl.NumberFormat("vi-VI", {
+    style: "currency",
+    currency: "VND",
+  }).format(number);
 };
 
 export default {
@@ -53,4 +64,6 @@ export default {
   validateName,
   increaseHour,
   validateNull,
+  numberWithCommas,
+  formatVND,
 };

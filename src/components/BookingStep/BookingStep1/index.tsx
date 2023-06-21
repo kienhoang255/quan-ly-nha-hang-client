@@ -66,7 +66,7 @@ const BookingStep1: React.FC<Props> = ({
 
   // On fetching table unmount table item
   const [fetching, setFetching] = useState(true);
-
+  const [disableOnChangeFilter, setDisableOnChangeFilter] = useState(false);
   const [notFoundTable, setNotFoundTable] = useState(false);
 
   type formSearchType = {
@@ -79,9 +79,8 @@ const BookingStep1: React.FC<Props> = ({
     stage: "1",
   });
 
-  const [filterSelected, setFilterSelected] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [filterSelected, setFilterSelected] = useState<any>({ options: [] });
+  const [tableFilter, setTableFilter] = useState<any>([]);
 
   // Create options for auto complete 'timePickList'
   const timePickList = useMemo(() => {
@@ -105,14 +104,6 @@ const BookingStep1: React.FC<Props> = ({
         dispatch(setStage(res.data));
       });
     }
-    // Get options/filters of Table Image from API
-    if (!options[0]) {
-      services.getOptions().then((res) => {
-        dispatch(setOptions(res.data.data));
-      });
-    }
-    // Get table from API
-    // handleOnSearch();
   }, []);
 
   // Get image by id
@@ -146,27 +137,29 @@ const BookingStep1: React.FC<Props> = ({
     event: React.ChangeEvent<HTMLInputElement>,
     value: string | number
   ) => {
-    setFilterSelected((prev) => ({
-      ...prev,
-      [value]: event.target.checked,
-    }));
+    if (filterSelected.options?.find((f: any) => f === value)) {
+      setFilterSelected((prev: any) => ({
+        ...prev,
+        options: prev.options.filter((fil: any) => fil !== value),
+      }));
+    } else
+      setFilterSelected((prev: any) => ({
+        ...prev,
+        options: [...prev?.options, value],
+      }));
   };
 
   // Debounce on change filter
   useEffect(() => {
-    let result: string[] = [];
     // Function debounce handler
     const handler = setTimeout(() => {
-      for (const filter of Object.entries(filterSelected)) {
-        // Add filter
-        filter[1] && result.push(filter[0]);
-      }
-      // If exist client select filter
-      if (result.length > 0) {
+      if (filterSelected.options.length > 0) {
         setFetching(false);
-        services.getTableByFilter(result).then((res) => {
+        setDisableOnChangeFilter(true);
+        services.getTableByFilter(filterSelected.options).then((res) => {
           dispatch(setTable(res.data.data));
           setFetching(true);
+          setDisableOnChangeFilter(false);
           res.data.data.length == 0
             ? setNotFoundTable(true)
             : setNotFoundTable(false);
@@ -176,11 +169,31 @@ const BookingStep1: React.FC<Props> = ({
       // Get table in first render
       else {
         handleOnSearch();
+        setDisableOnChangeFilter(false);
       }
     }, 700);
     // Clear timeout by id handler
     return () => clearTimeout(handler);
   }, [filterSelected]);
+
+  useEffect(() => {
+    if (filterSelected?.options.length > 0) {
+      let optionsNew: any = [];
+      table.map((t) => {
+        if (tableImage[t._id]) {
+          optionsNew.push(...tableImage[t._id].options);
+        }
+      });
+      const newOptions = new Set(optionsNew);
+      if (optionsNew.length > 0) {
+        dispatch(setOptions([...newOptions]));
+      }
+    } else {
+      services.getOptions().then((res) => {
+        dispatch(setOptions(res.data.data));
+      });
+    }
+  }, [table, tableImage]);
 
   // Handle on select table
   const handleOnSelectedTable = (data: {}) => {
@@ -273,7 +286,7 @@ const BookingStep1: React.FC<Props> = ({
               />
               <TextField
                 id="numOfPeople"
-                label="Số lượng người"
+                label="Chỗ ngồi"
                 variant="outlined"
                 type="text"
                 helperText={errorMessage.numOfPeople.message}
@@ -283,14 +296,14 @@ const BookingStep1: React.FC<Props> = ({
                   if (event.target.value.length > 0) {
                     // Value can't bigger 12 or value must be number
                     if (
-                      +event.target.value > 12 ||
+                      +event.target.value > 30 ||
                       !Number(event.target.value)
                     ) {
                       // Set error message
                       setErrorMessage((prev) => ({
                         ...prev,
                         numOfPeople: {
-                          message: "Tầng phải là số và tối đa 12",
+                          message: "Chỗ ngồi phải là số và tối đa 30",
                           notification: true,
                         },
                       }));
@@ -349,19 +362,39 @@ const BookingStep1: React.FC<Props> = ({
                 Lọc
               </Typography>
               <Box
-                sx={{ height: "240px", overflow: "hidden", overflowY: "auto" }}
+                sx={{
+                  height: "240px",
+                  overflow: "hidden",
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
               >
                 {options.map((value: string | number, index: number) => {
                   return (
                     <FormControlLabel
                       key={index}
                       label={value}
+                      sx={{
+                        fontSize: {
+                          xs: "20px",
+                          sm: "25px",
+                          md: "25px",
+                          lg: "30px",
+                        },
+                      }}
                       control={
                         <Checkbox
-                          checked={!!filterSelected[value]}
+                          disabled={disableOnChangeFilter}
+                          checked={
+                            !!filterSelected?.options?.find(
+                              (e: any) => e === value
+                            )
+                          }
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                           ) => {
+                            setDisableOnChangeFilter(true);
                             handleOnChangeFilter(event, value);
                           }}
                         />
@@ -375,7 +408,10 @@ const BookingStep1: React.FC<Props> = ({
           <Box sx={styles.containerFound}>
             <Typography
               gutterBottom
-              sx={{ fontSize: "30px", fontWeight: "400" }}
+              sx={{
+                fontSize: { xs: "20px", sm: "25px", md: "25px", lg: "30px" },
+                fontWeight: "400",
+              }}
             >
               Tìm thấy {table.length} bàn
             </Typography>
@@ -403,9 +439,20 @@ const BookingStep1: React.FC<Props> = ({
                         borderRadius: "6px",
                       }}
                     >
-                      <Typography variant="h6" sx={{ flexGrow: "1" }}>
-                        Dựa vào tìm kiếm của bạn chúng tôi không thể tìm thấy
-                        bất cứ bàn nào
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          flexGrow: "1",
+                          fontSize: {
+                            xs: "13px",
+                            sm: "15px",
+                            md: "17px",
+                            lg: "20px",
+                          },
+                        }}
+                      >
+                        Chúng tôi không thể tìm thấy bàn nào dựa trên tìm kiếm
+                        của bạn!
                       </Typography>
                       <Button
                         sx={{ justifySelf: "end" }}

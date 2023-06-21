@@ -1,5 +1,13 @@
-import React from "react";
-import { Box, Divider, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Divider, Typography, Button } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import services from "../../services";
+import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
+import SentimentDissatisfiedOutlinedIcon from "@mui/icons-material/SentimentDissatisfiedOutlined";
+import SentimentNeutralOutlinedIcon from "@mui/icons-material/SentimentNeutralOutlined";
+import SentimentVerySatisfiedOutlinedIcon from "@mui/icons-material/SentimentVerySatisfiedOutlined";
+import moment from "moment";
 
 interface Props {
   value: any;
@@ -23,15 +31,68 @@ const Tab4: React.FC<Props> = ({ value }) => {
     right: {
       padding: "24px",
       width: "50%",
-      height: "170px",
+      height: "160px",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
+      icon: { width: "50px", height: "50px" },
+      emoIcon: {
+        bad: {
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          color: "gray",
+          "&:hover": {
+            color: "red",
+            backgroundColor: "transparent",
+          },
+        },
+        average: {
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          color: "gray",
+          "&:hover": {
+            color: "orange",
+            backgroundColor: "transparent",
+          },
+        },
+        ok: {
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          color: "gray",
+          "&:hover": {
+            color: "blue",
+            backgroundColor: "transparent",
+          },
+        },
+        good: {
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          color: "gray",
+          "&:hover": {
+            color: "green",
+            backgroundColor: "transparent",
+          },
+        },
+        awesome: {
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          color: "gray",
+          "&:hover": {
+            color: "pink",
+            backgroundColor: "transparent",
+          },
+        },
+      },
     },
     left: {
       margin: "24px",
-      height: "170px",
+      height: "160px",
       width: "50%",
       display: "flex",
       flexDirection: "column",
@@ -53,52 +114,101 @@ const Tab4: React.FC<Props> = ({ value }) => {
     },
     subTitle: { color: "gray" },
   };
+
+  const [booking, setBooking] = useState([]);
+
+  const user = useAppSelector((state) => state.user._id);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    user &&
+      services.getBookingByIdClient(user).then((res) => {
+        setBooking(res.data);
+      });
+  }, []);
+
   return (
     <>
       {value === 3 && (
         <Box sx={styles.container}>
-          <Box sx={styles.billItem}>
-            <Box sx={styles.left}>
-              <Typography variant="h5" gutterBottom>
-                Mã đặt bàn #734351
-              </Typography>
-              <Box sx={styles.left.content}>
-                <Box sx={styles.left.total}>
-                  <Typography variant="body1">Tên khách hàng:</Typography>
-                  <Typography variant="body1">Kien</Typography>
+          {booking?.map((e, key) => (
+            <Box sx={styles.billItem} key={key}>
+              <Box sx={styles.left}>
+                <Typography variant="h6" gutterBottom>
+                  Mã đặt bàn #{e?._id}
+                </Typography>
+                <Box sx={styles.left.content}>
+                  {/* <Box sx={styles.left.total}>
+                    <Typography variant="body1">Tên khách hàng:</Typography>
+                    <Typography variant="body1">Kien</Typography>
+                  </Box> */}
+                  <Box sx={styles.left.total}>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      Ngày check in:
+                    </Typography>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      {moment(e?.createdAt).format("DD-MM-YYYY")}
+                    </Typography>
+                  </Box>
+                  <Box sx={styles.left.total}>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      Thời gian check in:
+                    </Typography>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      {e.timeCheckIn.slice(0, 2)}h{e.timeCheckIn.slice(2, 4)}
+                    </Typography>
+                  </Box>
+                  <Box sx={styles.left.total}>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      Yêu cầu đặc biệt:
+                    </Typography>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      {e.specialRequired
+                        ? e.specialRequired
+                        : "Không có yêu cầu!"}
+                    </Typography>
+                  </Box>
+                  <Box sx={styles.left.total}>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      Trạng thái:
+                    </Typography>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      {e?.status === "pending"
+                        ? "Chưa check in"
+                        : "Đã check in"}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box sx={styles.left.total}>
-                  <Typography sx={styles.subTitle} variant="body2">
-                    Ngày check in:
-                  </Typography>
-                  <Typography sx={styles.subTitle} variant="body2">
-                    Coin
-                  </Typography>
-                </Box>
-                <Box sx={styles.left.total}>
-                  <Typography sx={styles.subTitle} variant="body2">
-                    Thời gian check in:
-                  </Typography>
-                  <Typography sx={styles.subTitle} variant="body2">
-                    Coin
-                  </Typography>
-                </Box>
-                <Box sx={styles.left.total}>
-                  <Typography sx={styles.subTitle} variant="body2">
-                    Số lượng người:
-                  </Typography>
-                  <Typography sx={styles.subTitle} variant="body2">
-                    Coin
-                  </Typography>
+              </Box>
+              <Divider orientation="vertical" variant="middle" flexItem />
+              <Box sx={styles.right}>
+                <Typography variant="h6">Đánh giá về nhà hàng</Typography>
+                <Box sx={styles.right.emoIcon}>
+                  <Button sx={styles.right.emoIcon.bad}>
+                    <SentimentDissatisfiedOutlinedIcon sx={styles.right.icon} />
+                  </Button>
+
+                  <Button sx={styles.right.emoIcon.average}>
+                    <SentimentNeutralOutlinedIcon sx={styles.right.icon} />
+                  </Button>
+
+                  <Button sx={styles.right.emoIcon.ok}>
+                    <SentimentSatisfiedAltOutlinedIcon sx={styles.right.icon} />
+                  </Button>
+
+                  <Button sx={styles.right.emoIcon.good}>
+                    <EmojiEmotionsOutlinedIcon sx={styles.right.icon} />
+                  </Button>
+
+                  <Button sx={styles.right.emoIcon.awesome}>
+                    <SentimentVerySatisfiedOutlinedIcon
+                      sx={styles.right.icon}
+                    />
+                  </Button>
                 </Box>
               </Box>
             </Box>
-            <Divider orientation="vertical" variant="middle" flexItem />
-            <Box sx={styles.right}>
-              <Typography variant="h6">Coin</Typography>
-              <Box></Box>
-            </Box>
-          </Box>
+          ))}
         </Box>
       )}
     </>

@@ -104,7 +104,7 @@ const UserBtn = () => {
 
   const handleOnLogout = () => {
     dispatch(removeUser(undefined));
-    document.cookie = "token" + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    document.cookie = "token_cus" + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     navigate("/user");
     navigate("/");
   };

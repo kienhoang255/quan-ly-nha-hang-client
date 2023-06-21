@@ -165,7 +165,7 @@ const Register = () => {
       );
 
       // Set to cookie
-      document.cookie = `token=${createToken}; expires=${expired}`;
+      document.cookie = `token_cus=${createToken}; expires=${expired}`;
 
       //Redirect to / (booking page)
       navigate("/booking");

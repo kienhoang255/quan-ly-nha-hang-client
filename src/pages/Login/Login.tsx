@@ -115,7 +115,7 @@ const Login = () => {
           );
 
           // Set to cookie
-          document.cookie = `token=${createToken}; expires=${expired}`;
+          document.cookie = `token_cus=${createToken}; expires=${expired}`;
 
           //Redirect to / (booking page)
           navigate("/booking");
@@ -140,7 +140,7 @@ const Login = () => {
             default:
               setErrMes((prev) => ({
                 ...prev,
-                err: "Có lỗi xảy ra, vui lòng liên hệ dev!",
+                err: "Email/số điện thoại không xác định!",
               }));
               break;
           }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   TableContainer,
   Paper,
@@ -8,8 +8,14 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
+import utils from "../../utils";
+import services from "../../services";
 
-const TableFoodBill = () => {
+interface Props {
+  orders?: any;
+}
+
+const TableFoodBill: React.FC<Props> = ({ orders }) => {
   const styles = {
     cellsNo: {
       padding: "8px",
@@ -26,16 +32,31 @@ const TableFoodBill = () => {
       padding: "8px",
     },
   };
-  const data = [
-    { name: "com suon bi cha", amount: 212, price: "10.000.000" },
-    { name: "com", amount: 2, price: "40" },
-    { name: "com", amount: 2, price: "40" },
-    { name: "com", amount: 2, price: "40" },
-    { name: "com", amount: 2, price: "40" },
-    { name: "com", amount: 2, price: "40" },
-    { name: "com", amount: 2, price: "40" },
-    { name: "com", amount: 2, price: "40" },
-  ];
+
+  const [storeName, setStoreName] = useState<any>({});
+
+  // const getNameFood = () => {
+  //   orders.forEach((e: any) => {
+  //     services.getFoodById(e._id).then((res) => {
+  //       setStoreName((prev: any) => ({
+  //         ...prev,
+  //         [res.data._id]: res.data.name,
+  //       }));
+  //     });
+  //   });
+  // };
+
+  useEffect(() => {
+    orders.forEach((e: any) => {
+      services.getFoodById(e?.id_food).then((res) => {
+        setStoreName((prev: any) => ({
+          ...prev,
+          [res.data._id]: res.data.name,
+        }));
+      });
+    });
+  }, []);
+
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -54,7 +75,7 @@ const TableFoodBill = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row, key) => (
+          {orders?.map((row: any, key: any) => (
             <TableRow
               key={key}
               sx={{ "&:last-child td, &:last-child td": { border: 0 } }}
@@ -63,14 +84,16 @@ const TableFoodBill = () => {
                 {key}
               </TableCell>
               <TableCell component="th" scope="row" sx={styles.cellsName}>
-                {row.name}
+                {storeName[row?.id_food]
+                  ? storeName[row?.id_food]
+                  : "loading..."}
               </TableCell>
 
               <TableCell sx={styles.cellsAmount} align="center">
-                {row.amount}
+                {row?.quantity}
               </TableCell>
               <TableCell sx={styles.cellsPrice} align="right">
-                {row.price}
+                {utils.numberWithCommas(row?.price)}
               </TableCell>
             </TableRow>
           ))}

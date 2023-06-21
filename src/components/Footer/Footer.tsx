@@ -40,22 +40,21 @@ const Footer = () => {
         <Box sx={styles.content}>
           <Box sx={styles.styleLeft}>
             <Typography variant="h6" gutterBottom>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              CÔNG TY CỔ PHẦN TẬP ĐOÀN MỘT THÀNH VIÊN
             </Typography>
             <Typography variant="body2" sx={styles.styleLeft.subtitle}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Excepturi, et.
+              Trụ sở: 180 Cao Lỗ, Phường 4, Quận 8, TPHCM.
             </Typography>
             <Typography variant="body2" sx={styles.styleLeft.subtitle}>
-              GPĐK: 0102721191 cấp ngày 09/04/2008
+              Luận văn tốt nghiệp 08/2023
             </Typography>
             <Typography variant="body2" sx={styles.styleLeft.subtitle}>
-              ĐT: 043 222 3000 Email: support.hn@ggg.com.vn
+              Email: DH51804901@student.stu.edu.vn
             </Typography>
           </Box>
           <Box sx={styles.styleRight}>
             <Typography variant="subtitle2">
-              © 2011 Golden Gate ., JSC. All rights reserved
+              © 2023 STU Ho Chi Minh City University of Technology and Education
             </Typography>
           </Box>
         </Box>

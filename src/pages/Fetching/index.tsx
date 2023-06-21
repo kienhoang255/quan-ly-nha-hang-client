@@ -20,7 +20,7 @@ const Fetching: React.FC<Props> = ({ children }) => {
       .split(";")
       .map((e) => e.split("="))
       .forEach((e) =>
-        e[0].trim() === "token" ? (cookie = e[1]) : (cookie = undefined)
+        e[0].trim() === "token_cus" ? (cookie = e[1]) : (cookie = undefined)
       );
     // Check cookie exist
     if (!cookie) {

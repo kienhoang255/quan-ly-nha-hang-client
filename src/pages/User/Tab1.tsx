@@ -9,15 +9,29 @@ import {
   MenuItem,
   Typography,
   Avatar,
+  Alert,
 } from "@mui/material";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import moment from "moment";
+import {
+  setAddress,
+  setBirth,
+  setEmail,
+  setPhone,
+  setSex,
+  setUser,
+  setUsername,
+} from "../../features/user/userSlice";
+import services from "../../services";
+import utils from "../../utils";
 
 interface Props {
   value: any;
+  handleTriggerAlert?: any;
 }
 
-const Tab1: React.FC<Props> = ({ value }) => {
+const Tab1: React.FC<Props> = ({ value, handleTriggerAlert }) => {
   const styles = {
     container: {
       width: "1100px",
@@ -94,9 +108,18 @@ const Tab1: React.FC<Props> = ({ value }) => {
     iconCoin: {
       color: "#ff720d",
     },
+    alert: {
+      position: "absolute",
+    },
   };
+  const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
-  const [sex, setSex] = useState("");
+  const [errMsg, setErrMsg] = useState<{
+    username?: string;
+    email?: string;
+    phone?: string;
+    err?: string;
+  }>({});
 
   function stringToColor(string: string) {
     let hash = 0;
@@ -133,7 +156,86 @@ const Tab1: React.FC<Props> = ({ value }) => {
   }
 
   const handleChange = (event: any) => {
-    setSex(event.target.value);
+    dispatch(setSex(event.target.value));
+  };
+
+  const handleCancelUpdate = () => {
+    if (user?._id)
+      services.getClient(user?._id).then((res) => {
+        dispatch(setUser(res.data));
+        console.log(res.data);
+      });
+  };
+
+  const handleUpdateInfo = () => {
+    if (!utils.validateNull(user.username)) {
+      setErrMsg((prev) => ({ ...prev, username: "Không được để trống!" }));
+    } else {
+      setErrMsg((prev) => ({ ...prev, username: "" }));
+    }
+
+    if (!utils.validateNull(user.email) && !utils.validateNull(user.phone)) {
+      setErrMsg((prev) => ({
+        ...prev,
+        email: "Email/SĐT dùng để đăng nhập, vui lòng điền 1 trong 2",
+        phone: "Email/SĐT dùng để đăng nhập, vui lòng điền 1 trong 2",
+      }));
+    } else if (
+      utils.validateNull(user.email) &&
+      !utils.validateEmail(user.email)
+    ) {
+      setErrMsg((prev) => ({ ...prev, email: "Email không hợp lệ!" }));
+    } else if (
+      utils.validateNull(user.phone) &&
+      !utils.validatePhoneNumber(user.phone)
+    ) {
+      setErrMsg((prev) => ({ ...prev, phone: "Số điện thoại không hợp lệ!" }));
+    } else {
+      setErrMsg((prev) => ({
+        ...prev,
+        email: "",
+        phone: "",
+      }));
+      services
+        .updateClient(user)
+        .then((res) => {
+          console.log(res.data);
+          handleTriggerAlert();
+        })
+        .catch((err) => {
+          switch (err.response.status) {
+            case 400:
+              setErrMsg((prev) => ({
+                ...prev,
+                email: "Email/SĐT bạn vừa cập nhật đã có người khác sử dụng!",
+                phone: "Email/SĐT bạn vừa cập nhật đã có người khác sử dụng!",
+              }));
+              break;
+            case 401:
+              setErrMsg((prev) => ({
+                ...prev,
+                email: "Email đã có người sử dụng!",
+              }));
+              break;
+            case 402:
+              setErrMsg((prev) => ({
+                ...prev,
+                phone: "Số điện thoại đã có người sử dụng!",
+              }));
+              break;
+            case 403:
+              setErrMsg((prev) => ({
+                ...prev,
+                email: "Không được để trống",
+                phone: "Không được để trống",
+              }));
+              break;
+
+            default:
+              break;
+          }
+        });
+    }
   };
   return (
     <>
@@ -145,7 +247,7 @@ const Tab1: React.FC<Props> = ({ value }) => {
             <Box sx={styles.left.body}>
               <Box sx={styles.left.body.detail}>
                 <Typography variant="body1">ID:</Typography>
-                <Typography variant="body1">1231512</Typography>
+                <Typography variant="body1">{user?._id}</Typography>
               </Box>
               <Box sx={styles.left.body.detail}>
                 <Typography variant="body1">Coin</Typography>
@@ -162,11 +264,13 @@ const Tab1: React.FC<Props> = ({ value }) => {
               </Box>
               <Box sx={styles.left.body.detail}>
                 <Typography variant="body1">Level</Typography>
-                <Typography variant="body1">Level</Typography>
+                <Typography variant="body1">0</Typography>
               </Box>
               <Box sx={styles.left.body.detail}>
-                <Typography variant="body1">Ngay bat dau</Typography>
-                <Typography variant="body1">Level</Typography>
+                <Typography variant="body1">Ngày bắt đầu</Typography>
+                <Typography variant="body1">
+                  {moment(user?.createdAt).format("DD-MM-YYYY")}
+                </Typography>
               </Box>
             </Box>
             <Box sx={styles.left.footer}>
@@ -174,41 +278,67 @@ const Tab1: React.FC<Props> = ({ value }) => {
                 sx={styles.left.footer.btnCancel}
                 variant="outlined"
                 color="inherit"
+                onClick={() => {
+                  handleCancelUpdate();
+                }}
               >
-                Huy
+                Hủy
               </Button>
-              <Button sx={styles.left.footer.btnSave} variant="contained">
-                Luu
+              <Button
+                sx={styles.left.footer.btnSave}
+                variant="contained"
+                onClick={() => handleUpdateInfo()}
+              >
+                Lưu
               </Button>
             </Box>
           </Box>
           <Box sx={styles.right}>
             <Box sx={styles.right.title}>
-              <Typography variant="body1">Level</Typography>
+              <Typography variant="body1">Thông tin</Typography>
             </Box>
             <TextField
+              error={!!errMsg?.username}
+              helperText={errMsg?.username}
               id="standard-basic"
               label="Họ tên"
               variant="standard"
-              defaultValue={user.username}
+              value={user.username}
+              onChange={(e) => {
+                dispatch(setUsername(e.target.value));
+              }}
             />
             <TextField
+              error={!!errMsg?.email}
+              helperText={errMsg?.email}
               id="standard-basic"
               label="Email"
               variant="standard"
-              defaultValue={user.email}
+              value={user.email}
+              onChange={(e) => {
+                dispatch(setEmail(e.target.value));
+              }}
             />
             <TextField
+              error={!!errMsg?.phone}
+              helperText={errMsg?.phone}
               id="standard-basic"
               label="Số điện thoại"
               variant="standard"
-              defaultValue={user?.phone}
+              value={user?.phone}
+              onChange={(e) => {
+                dispatch(setPhone(e.target.value));
+              }}
             />
             <TextField
               id="standard-basic"
               label="Ngày sinh"
               variant="standard"
-              defaultValue={user?.birth}
+              value={user.birth ? user?.birth : "yyyy-MM-dd"}
+              type="date"
+              onChange={(e) => {
+                dispatch(setBirth(e.target.value));
+              }}
             />
             <FormControl variant="standard">
               <InputLabel id="demo-simple-select-standard-label">
@@ -217,7 +347,7 @@ const Tab1: React.FC<Props> = ({ value }) => {
               <Select
                 labelId="demo-simple-select-standard-label"
                 id="demo-simple-select-standard"
-                value={sex || user?.sex || "empty"}
+                value={user?.sex || "empty"}
                 onChange={handleChange}
                 label="Sex"
               >
@@ -230,7 +360,10 @@ const Tab1: React.FC<Props> = ({ value }) => {
               id="standard-basic"
               label="Địa chỉ"
               variant="standard"
-              defaultValue={user?.address}
+              value={user?.address ? user?.address : ""}
+              onChange={(e) => {
+                dispatch(setAddress(e.target.value));
+              }}
             />
           </Box>
         </Box>

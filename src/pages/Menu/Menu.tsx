@@ -48,7 +48,7 @@ const Menu = () => {
     setAlignment(menu.type[0]);
     if (menu.foods.length === 0 && menu.type.length !== 0) {
       dispatch(addTypeCalled(menu.type[0]));
-      services.getFoodByType({ type: alignment }).then((res) => {
+      services.getFoodByType({ type: menu.type[0] }).then((res) => {
         dispatch(addFoodByApi(res));
       });
     }
@@ -69,7 +69,8 @@ const Menu = () => {
   };
 
   const existData = menu.foods?.filter(
-    (e: { type: string }) => e.type === alignment
+    (e: { type: string; status: Boolean }) =>
+      e.type === alignment && e.status === true
   );
 
   return (

@@ -14,14 +14,16 @@ import Logo from "../Logo/Logo";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TableFoodBill from "../TableFoodBill/TableFoodBill";
 import ClearIcon from "@mui/icons-material/Clear";
+import utils from "../../utils";
 
 interface Props {
   children?: JSX.Element;
   sx?: {};
   label: string;
+  data?: any;
 }
 
-const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
+const ModalBill: React.FC<Props> = ({ children, sx, label, data }) => {
   const styles = {
     container: {
       position: "absolute" as "absolute",
@@ -30,7 +32,7 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
       transform: "translate(-50%, -50%)",
       bgcolor: "background.paper",
       width: "550px",
-      height: "635px",
+      height: "605px",
       borderRadius: "10px",
       padding: "40px",
       overflow: "hidden",
@@ -97,7 +99,7 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
               Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!
             </Typography>
             <Typography variant="subtitle2" gutterBottom>
-              Đơn hàng: #1f51ee
+              Đơn hàng: #{data._id}
             </Typography>
             <Button sx={styles.header.closeBtn} onClick={handleClose}>
               <ClearIcon />
@@ -111,7 +113,7 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
           <Box sx={styles.body}>
             <Box sx={styles.details}>
               <Typography sx={styles.bold} variant="subtitle2">
-                Chi tiết đơn hàng
+                Chi tiết hóa đơn
               </Typography>
               <Typography sx={styles.gray} variant="subtitle2">
                 24/02/2023 19:26:48
@@ -119,20 +121,12 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
             </Box>
             <Accordion sx={styles.expandDetail}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Chi tiết sản phẩm đã dùng</Typography>
+                <Typography>Chi tiết món ăn đã dùng</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <TableFoodBill />
+                <TableFoodBill orders={data.orders} />
               </AccordionDetails>
             </Accordion>
-            <Box sx={styles.details}>
-              <Typography sx={styles.gray} variant="subtitle2">
-                Tổng tiền hàng
-              </Typography>
-              <Typography sx={styles.gray} variant="subtitle2">
-                0
-              </Typography>
-            </Box>
             <Box sx={styles.details}>
               <Typography sx={styles.gray} variant="subtitle2">
                 Số tiền giảm giá
@@ -167,7 +161,7 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
             </Box>
             <Box sx={styles.details}>
               <Typography sx={styles.gray} variant="subtitle2">
-                Số tiền đã dduwa
+                Số tiền đã đưa
               </Typography>
               <Typography sx={styles.gray} variant="subtitle2">
                 0
@@ -175,7 +169,7 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
             </Box>
             <Box sx={styles.details}>
               <Typography sx={styles.gray} variant="subtitle2">
-                Số thua
+                Số tiền thừa
               </Typography>
               <Typography sx={styles.gray} variant="subtitle2">
                 0
@@ -204,7 +198,7 @@ const ModalBill: React.FC<Props> = ({ children, sx, label }) => {
               Tổng số tiền phải trả
             </Typography>
             <Typography sx={styles.bold} variant="subtitle1">
-              0
+              {utils.formatVND(Number(data.totalPrice))}
             </Typography>
           </Box>
         </Box>

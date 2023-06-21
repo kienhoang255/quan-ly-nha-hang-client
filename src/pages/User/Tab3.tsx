@@ -38,9 +38,10 @@ const Tab3: React.FC<Props> = ({ value }) => {
               orders: [any];
               totalPrice: string;
               createdAt: Date;
-            }) => (
-              <BillItem key={e._id} billInfo={e} />
-            )
+            }) => {
+              if (e.status === "finished")
+                return <BillItem key={e._id} billInfo={e} />;
+            }
           )}
         </Box>
       )}

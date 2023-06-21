@@ -5,13 +5,16 @@ import SentimentDissatisfiedOutlinedIcon from "@mui/icons-material/SentimentDiss
 import SentimentNeutralOutlinedIcon from "@mui/icons-material/SentimentNeutralOutlined";
 import SentimentVerySatisfiedOutlinedIcon from "@mui/icons-material/SentimentVerySatisfiedOutlined";
 import ModalBill from "../Modal/ModalBill";
+import formatVND from "../../utils/";
 import moment from "moment";
 import { useMemo } from "react";
+import utils from "../../utils/";
 interface Props {
   billInfo: {
     _id: string;
     createdAt: any;
     totalPrice: string;
+    orders: any;
   };
 }
 
@@ -170,14 +173,14 @@ const BillItem: React.FC<Props> = ({ billInfo }) => {
 
           <Box sx={styles.right.total}>
             <Typography sx={styles.subTitle} variant="body2">
-              Tổng đã trả: {billInfo.totalPrice}
+              Tổng đã trả: {utils.formatVND(Number(billInfo.totalPrice))}
             </Typography>
             <Typography sx={styles.subTitle} variant="body2">
               Coin
             </Typography>
           </Box>
         </Box>
-        <ModalBill sx={styles.right.btn} label="Xem chi tiết" />
+        <ModalBill sx={styles.right.btn} label="Xem chi tiết" data={billInfo} />
       </Box>
     </Box>
   );

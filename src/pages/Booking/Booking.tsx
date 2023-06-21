@@ -79,7 +79,7 @@ const Booking = () => {
       .split(";")
       .map((e) => e.split("="))
       .forEach((e) =>
-        e[0].trim() === "token" ? setIsLogin(false) : setIsLogin(true)
+        e[0].trim() === "token_cus" ? setIsLogin(false) : setIsLogin(true)
       );
   }, []);
 
