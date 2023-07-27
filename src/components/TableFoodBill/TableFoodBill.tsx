@@ -23,6 +23,9 @@ const TableFoodBill: React.FC<Props> = ({ orders }) => {
     },
     cellsName: {
       padding: "8px",
+      display: "flex !important",
+      justifyContent: "space-between !important",
+      flexDirection: "row !important",
     },
     cellsAmount: {
       padding: "8px",
@@ -30,6 +33,11 @@ const TableFoodBill: React.FC<Props> = ({ orders }) => {
     },
     cellsPrice: {
       padding: "8px",
+    },
+
+    cancel: {
+      backgroundColor: "gray",
+      color: "white",
     },
   };
 
@@ -78,21 +86,40 @@ const TableFoodBill: React.FC<Props> = ({ orders }) => {
           {orders?.map((row: any, key: any) => (
             <TableRow
               key={key}
-              sx={{ "&:last-child td, &:last-child td": { border: 0 } }}
+              sx={{
+                "&:last-child td, &:last-child td": {
+                  border: 0,
+                },
+              }}
             >
-              <TableCell sx={styles.cellsNo} align="left">
+              <TableCell
+                sx={(styles.cellsNo, row.status == "cancel" && styles.cancel)}
+                align="left"
+              >
                 {key}
               </TableCell>
-              <TableCell component="th" scope="row" sx={styles.cellsName}>
+              <TableCell
+                sx={(styles.cellsName, row.status == "cancel" && styles.cancel)}
+              >
                 {storeName[row?.id_food]
                   ? storeName[row?.id_food]
                   : "loading..."}
               </TableCell>
 
-              <TableCell sx={styles.cellsAmount} align="center">
-                {row?.quantity}
+              <TableCell
+                sx={
+                  (styles.cellsAmount, row.status == "cancel" && styles.cancel)
+                }
+                align="center"
+              >
+                {row.status == "cancel" ? "Đã hủy" : row?.quantity}
               </TableCell>
-              <TableCell sx={styles.cellsPrice} align="right">
+              <TableCell
+                sx={
+                  (styles.cellsPrice, row.status == "cancel" && styles.cancel)
+                }
+                align="right"
+              >
                 {utils.numberWithCommas(row?.price)}
               </TableCell>
             </TableRow>

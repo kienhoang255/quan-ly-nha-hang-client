@@ -102,6 +102,16 @@ const ModalCreateBooking: React.FC<Props> = ({
               Có lỗi vui lòng liên hệ tổng đài!
             </Typography>
           )}
+          {status === "success" && (
+            <>
+              <Typography variant="h6" component="h2">
+                Đặt bàn thành công!
+              </Typography>
+              <Typography variant="body1" component="h2">
+                Xin vui lòng đến đúng giờ đặt, thời gian trễ nhất là 30 phút
+              </Typography>
+            </>
+          )}
           <Box sx={styles.btnContent}>
             <Link to="/" style={styles.link}>
               <Button sx={styles.homeBtn} variant="outlined">

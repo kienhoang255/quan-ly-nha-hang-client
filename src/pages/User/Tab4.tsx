@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Divider, Typography, Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import services from "../../services";
@@ -31,7 +31,7 @@ const Tab4: React.FC<Props> = ({ value }) => {
     right: {
       padding: "24px",
       width: "50%",
-      height: "160px",
+      // height: "160px",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
@@ -92,7 +92,7 @@ const Tab4: React.FC<Props> = ({ value }) => {
     },
     left: {
       margin: "24px",
-      height: "160px",
+      // height: "160px",
       width: "50%",
       display: "flex",
       flexDirection: "column",
@@ -116,6 +116,7 @@ const Tab4: React.FC<Props> = ({ value }) => {
   };
 
   const [booking, setBooking] = useState([]);
+  const [nameTable, setNameTable] = useState({});
 
   const user = useAppSelector((state) => state.user._id);
   const dispatch = useAppDispatch();
@@ -126,6 +127,18 @@ const Tab4: React.FC<Props> = ({ value }) => {
         setBooking(res.data);
       });
   }, []);
+
+  useEffect(() => {
+    if (booking[0]) {
+      booking.forEach((e) => {
+        services
+          .getTableById(e.id_table)
+          .then((res) =>
+            setNameTable((prev: any) => ({ ...prev, [e._id]: res.data.name }))
+          );
+      });
+    }
+  }, [booking]);
 
   return (
     <>
@@ -138,10 +151,14 @@ const Tab4: React.FC<Props> = ({ value }) => {
                   Mã đặt bàn #{e?._id}
                 </Typography>
                 <Box sx={styles.left.content}>
-                  {/* <Box sx={styles.left.total}>
-                    <Typography variant="body1">Tên khách hàng:</Typography>
-                    <Typography variant="body1">Kien</Typography>
-                  </Box> */}
+                  <Box sx={styles.left.total}>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      Bàn
+                    </Typography>
+                    <Typography sx={styles.subTitle} variant="body2">
+                      {nameTable[e?._id] ? nameTable[e?._id] : "loading..."}
+                    </Typography>
+                  </Box>
                   <Box sx={styles.left.total}>
                     <Typography sx={styles.subTitle} variant="body2">
                       Ngày check in:

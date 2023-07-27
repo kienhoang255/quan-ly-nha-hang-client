@@ -30,6 +30,7 @@ export const userSlice = createSlice({
         address: action.payload.address || "",
         sex: action.payload.sex || "",
         birth: action.payload.birth || "",
+        createdAt: action.payload.createdAt || "",
       };
     },
     removeUser: (state, action) => {

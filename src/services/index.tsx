@@ -38,6 +38,9 @@ const getTableByStage = async (params: {}) =>
 const searchTable = async (params: {}) =>
   await instance.get("table/search/", { params: params });
 
+const getTableById = async (id: string) =>
+  await instance.get(`table/find/${id}`);
+
 //TableImage
 
 const getOptions = async () => await axios.get(`${URL}table-image/options`);
@@ -89,4 +92,5 @@ export default {
   getFoodById,
   getBookingByIdClient,
   updateClient,
+  getTableById,
 };

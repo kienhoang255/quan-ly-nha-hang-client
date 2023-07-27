@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Typography, Modal } from "@mui/material";
+// import { Carousel } from "react-responsive-carousel";
+// import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import CarouselComponent from "./../Carousel/index";
 
 interface Props {
   tableInfo: {
@@ -22,6 +25,7 @@ const TableItem: React.FC<Props> = ({
   tableImage,
   handleOnSelectedTable,
 }) => {
+  const [modal, setModal] = useState(false);
   useEffect(() => {
     handleGetTableImage(tableInfo._id);
   }, []);
@@ -47,6 +51,13 @@ const TableItem: React.FC<Props> = ({
           borderRadius: "8px",
           backgroundSize: "cover",
           backgroundImage: `url(${tableImage?.image1})`,
+          cursor: "pointer",
+          "&:hover": {
+            opacity: 0.7,
+          },
+        }}
+        onClick={() => {
+          tableImage && setModal(!modal);
         }}
       ></Box>
       <Box sx={{ margin: "0 0 0 12px" }}>
@@ -96,6 +107,28 @@ const TableItem: React.FC<Props> = ({
       >
         Đặt ngay
       </Button>
+      <Modal
+        open={modal}
+        onClose={() => {
+          setModal(false);
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "15px",
+          }}
+        >
+          <CarouselComponent image={tableImage} />
+        </Box>
+      </Modal>
     </Box>
   );
 };

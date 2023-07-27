@@ -127,7 +127,7 @@ const Login = () => {
             case 402:
               setErrMes((prev) => ({
                 ...prev,
-                err: "Tài khoản chưa được đăng ký, vui lòng đăng kí trước!",
+                err: "Quý khách lần đầy sử dụng website, vui lòng đăng ký email/sdt vừa nhập",
               }));
               break;
             case 404:

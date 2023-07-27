@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -163,7 +163,6 @@ const Tab1: React.FC<Props> = ({ value, handleTriggerAlert }) => {
     if (user?._id)
       services.getClient(user?._id).then((res) => {
         dispatch(setUser(res.data));
-        console.log(res.data);
       });
   };
 

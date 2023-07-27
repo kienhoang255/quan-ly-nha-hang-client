@@ -219,11 +219,11 @@ const BookingStep2: React.FC<Props> = ({
 
           <Box sx={styles.box}>
             <Typography sx={styles.box.title}>
-              Nhập thông tin chi tiết của bạn
+              Thông tin chi tiết của bạn
             </Typography>
             <Chip
               sx={styles.box.chip}
-              label="Gần xong rồi! Lưu ý khi đến nhà hàng bạn cần cung cấp số điện hoặc email để check in"
+              label="Lưu ý khi đến nhà hàng bạn cần cung cấp số điện hoặc email để check in"
             />
             <Box sx={styles.box.content}>
               <TextField
@@ -237,6 +237,7 @@ const BookingStep2: React.FC<Props> = ({
                 }}
                 error={messageError?.username?.notification}
                 helperText={messageError?.username?.message}
+                disabled
               />
               <TextField
                 sx={styles.box.input}
@@ -249,6 +250,7 @@ const BookingStep2: React.FC<Props> = ({
                 }}
                 error={messageError?.phone?.notification}
                 helperText={messageError?.phone?.message}
+                disabled
               />
               <TextField
                 sx={styles.box.input}
@@ -261,6 +263,7 @@ const BookingStep2: React.FC<Props> = ({
                 }}
                 error={messageError?.email?.notification}
                 helperText={messageError?.email?.message}
+                disabled
               />
             </Box>
           </Box>

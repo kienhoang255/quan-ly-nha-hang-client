@@ -195,9 +195,7 @@ const BookingStep3: React.FC<Props> = ({
                 variant="outlined"
                 value={user.email}
               />
-              <Button onClick={() => handleBackStep()}>
-                Thay đổi thông tin
-              </Button>
+              <Button onClick={() => handleBackStep()}>Quay lại</Button>
             </Box>
           </Box>
           <FormGroup sx={{ padding: "16px" }}>

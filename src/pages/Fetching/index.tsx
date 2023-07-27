@@ -31,6 +31,7 @@ const Fetching: React.FC<Props> = ({ children }) => {
         services
           .getClient(decodedToken._id)
           .then((res) => {
+            console.log(res.data);
             dispatch(setUser({ ...res.data, _id: decodedToken._id }));
           })
           .catch((err) => err);
