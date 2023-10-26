@@ -164,7 +164,7 @@ const Tab4: React.FC<Props> = ({ value }) => {
                       Ngày check in:
                     </Typography>
                     <Typography sx={styles.subTitle} variant="body2">
-                      {moment(e?.createdAt).format("DD-MM-YYYY")}
+                      {moment(e?.dateCheckIn).format("DD-MM-YYYY")}
                     </Typography>
                   </Box>
                   <Box sx={styles.left.total}>

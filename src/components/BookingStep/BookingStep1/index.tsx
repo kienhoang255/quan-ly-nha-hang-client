@@ -154,13 +154,18 @@ const BookingStep1: React.FC<Props> = ({
     // Function debounce handler
     const handler = setTimeout(() => {
       if (filterSelected.options.length > 0) {
+        const params = {
+          timeCheckIn: booking.timeCheckIn,
+          dateCheckIn: moment(booking.dateCheckIn).format("YYYY-MM-DD"),
+          options: filterSelected.options,
+        };
         setFetching(false);
         setDisableOnChangeFilter(true);
-        services.getTableByFilter(filterSelected.options).then((res) => {
-          dispatch(setTable(res.data.data));
+        services.getTableByFilter(params).then((res) => {
+          dispatch(setTable(res.data));
           setFetching(true);
           setDisableOnChangeFilter(false);
-          res.data.data.length == 0
+          res.data.length == 0
             ? setNotFoundTable(true)
             : setNotFoundTable(false);
         });

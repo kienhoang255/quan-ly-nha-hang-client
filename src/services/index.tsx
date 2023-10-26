@@ -38,6 +38,9 @@ const getTableByStage = async (params: {}) =>
 const searchTable = async (params: {}) =>
   await instance.get("table/search/", { params: params });
 
+const getTableByFilter = async (params: any) =>
+  await instance.get("table/search/filter", { params: params });
+
 const getTableById = async (id: string) =>
   await instance.get(`table/find/${id}`);
 
@@ -47,9 +50,6 @@ const getOptions = async () => await axios.get(`${URL}table-image/options`);
 
 const getTableImage = async (params: string) =>
   await axios.get(`${URL}table-image/?id_table=${params}`);
-
-const getTableByFilter = async (params: string[]) =>
-  await instance.get("table-image/filter/", { params: { options: params } });
 
 // Client
 const login = async (data: {}) =>
